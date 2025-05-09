@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "slug": "react-gelistirme",
+    "title": "React Geliştirme",
+    "description": "lorem ipsum dolor sit amet consectetur adipiscing elit. Integer posuere erat a ante.",
+    "date": "2023-01-01"
+  },
+  {
+    "id": 2,
+    "slug": "javascript-gelistirme",
+    "title": "Javascript Geliştirme",
+    "description": "lorem ipsum dolor sit amet consectetur adipiscing elit. Integer posuere erat a ante.",
+    "date": "2023-01-02"
+  },
+  {
+    "id": 3,
+    "slug": "typescript-gelistirme",
+    "title": "TypeScript Geliştirme",
+    "description": "lorem ipsum dolor sit amet consectetur adipiscing elit. Integer posuere erat a ante.",
+    "date": "2023-01-03"
+  }
+]
