@@ -1,35 +1,29 @@
-import path from "path";
-import fs from "fs";
 import { notFound } from "next/navigation";
-
-export async function generateStaticParams() {
-  const filePath = path.join(process.cwd(), "src", "posts", "posts.json");
-  const jsonData = fs.readFileSync(filePath, "utf-8");
-  const posts = JSON.parse(jsonData);
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
+import { Alert, Paper } from "@mui/material";
 
 export default async function Page({ params }) {
   const { slug } = await params;
 
-  const filePath = path.join(process.cwd(), "src", "posts", "posts.json");
-  const jsonData = fs.readFileSync(filePath, "utf-8");
-  const posts = JSON.parse(jsonData);
+  try {
+    const response = await fetch("http://localhost:3000/api/blogs/" + slug);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const post = await response.json();
 
-  const post = posts.find((p) => p.slug === slug);
+    if (!post) {
+      notFound();
+    }
 
-  if (!post) {
-    notFound();
+    return (
+      <Paper elevation={3} sx={{ padding: "20px", margin: "20px" }}>
+        <h1>{post.title}</h1>
+        <p>{post.description}</p>
+        <small>{post.date}</small>
+      </Paper>
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return <Alert severity="error">Bir hata oluştu!</Alert>;
   }
-
-  return (
-    <div>
-      <h1>{post.title}</h1>
-      <p>{post.description}</p>
-      <small>{post.date}</small>
-    </div>
-  );
 }

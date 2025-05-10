@@ -8,7 +8,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Header />
-        <Container sx={{ mt: 10, mb: 20 }}>{children}</Container>
+        <Container>{children}</Container>
         <footer>
           <Footer />
         </footer>
