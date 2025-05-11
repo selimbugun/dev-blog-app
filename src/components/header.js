@@ -132,10 +132,19 @@ function Header() {
           >
             DevBlog
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+            }}
+          >
             <Button
               onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "white", display: "block" }}
+              sx={{
+                my: 2,
+                color: "inherit",
+                display: "block",
+              }}
               component={Link}
               href="/"
             >
@@ -143,7 +152,11 @@ function Header() {
             </Button>
             <Button
               onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "white", display: "block" }}
+              sx={{
+                my: 2,
+                color: "inherit",
+                display: "block",
+              }}
               component={Link}
               href="/blog"
             >
@@ -151,7 +164,11 @@ function Header() {
             </Button>
             <Button
               onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "white", display: "block" }}
+              sx={{
+                my: 2,
+                color: "inherit",
+                display: "block",
+              }}
               component={Link}
               href="/about"
             >
@@ -181,16 +198,28 @@ function Header() {
               onClose={handleCloseUserMenu}
             >
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography sx={{ textAlign: "center" }}>Profile</Typography>
+                <Typography
+                  sx={{ textAlign: "center" }}
+                  component={Link}
+                  href="/login"
+                >
+                  Giriş Yap
+                </Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography sx={{ textAlign: "center" }}>Account</Typography>
+                <Typography
+                  sx={{ textAlign: "center" }}
+                  component={Link}
+                  href="/register"
+                >
+                  Kayıt Ol
+                </Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
                 <Typography sx={{ textAlign: "center" }}>Dashboard</Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography sx={{ textAlign: "center" }}>Logout</Typography>
+                <Typography sx={{ textAlign: "center" }}>Çıkış Yap</Typography>
               </MenuItem>
             </Menu>
           </Box>
