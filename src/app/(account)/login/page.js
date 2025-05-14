@@ -22,11 +22,19 @@ export default function Page() {
     defaultValues: {
       username: "",
       password: "",
+      rememberMe: false,
     },
   });
 
   const onSubmit = async (data) => {
-    Login(data.username, data.password);
+    await console.log(data);
+    try {
+      const result = await Login(data.email, data.password, data.rememberMe);
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+      alert("Giriş başarısız", error.message);
+    }
   };
 
   return (
@@ -49,9 +57,9 @@ export default function Page() {
       <Paper elevation={3} sx={{ p: 2 }}>
         <Box>
           <TextField
-            {...register("username", { required: true })}
-            error={!!errors.username}
-            label="Kullanıcı Adı"
+            {...register("email", { required: true })}
+            error={!!errors.email}
+            label="E-posta"
             variant="outlined"
             fullWidth
             autoFocus
@@ -75,7 +83,7 @@ export default function Page() {
           }}
         >
           <Box sx={{ alignSelf: "flex-start", mb: 1 }}>
-            <Checkbox />
+            <Checkbox {...register("rememberMe")} />
             <Typography variant="body2" component="span">
               Beni Hatırla
             </Typography>
