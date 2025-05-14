@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
-import { createSupabaseWithToken } from "@/lib/supabaseWithToken";
+import createSupabaseWithToken from "@/lib/supabaseWithToken";
 
 export async function GET() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get("sb-access-token")?.value;
 
   if (!token) {

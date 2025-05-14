@@ -1,6 +1,11 @@
-import Image from "next/image";
+"use client";
+import { useSelector } from "react-redux";
 
 export default function Home() {
+  const user = useSelector((state) => state.user.user);
+
+  console.log(user);
+
   return (
     <div>
       <main>

@@ -1,17 +1,17 @@
-import Header from "@/components/header";
 import "./globals.css";
-import Footer from "@/components/footer";
 import { Container } from "@mui/material";
+import { Providers } from "./store/providers";
+import App from "@/components/appWrapper";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <body>
-        <Header />
-        <Container>{children}</Container>
-        <footer>
-          <Footer />
-        </footer>
+        <Providers>
+          <App>
+            <Container>{children}</Container>
+          </App>
+        </Providers>
       </body>
     </html>
   );

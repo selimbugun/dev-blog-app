@@ -1,4 +1,5 @@
 "use client";
+import { setUser } from "@/app/store/userSlice";
 import { Login } from "@/service/fetchUsers";
 import {
   Box,
@@ -12,6 +13,7 @@ import {
 } from "@mui/material";
 
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 export default function Page() {
   const {
@@ -26,11 +28,12 @@ export default function Page() {
     },
   });
 
+  const dispatch = useDispatch();
   const onSubmit = async (data) => {
     await console.log(data);
     try {
       const result = await Login(data.email, data.password, data.rememberMe);
-      console.log(result);
+      dispatch(setUser(result.user));
     } catch (error) {
       console.error(error);
       alert("Giriş başarısız", error.message);

@@ -1,4 +1,4 @@
-export default function supabaseWithToken(token) {
+export default function createSupabaseWithToken(token) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
