@@ -14,8 +14,11 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import CodeIcon from "@mui/icons-material/Code";
 import Link from "next/link";
+import GetUserClient from "./getUserClient";
 
 function Header() {
+  const user = GetUserClient();
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -197,30 +200,40 @@ function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography
-                  sx={{ textAlign: "center" }}
-                  component={Link}
-                  href="/login"
-                >
-                  Giriş Yap
-                </Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography
-                  sx={{ textAlign: "center" }}
-                  component={Link}
-                  href="/register"
-                >
-                  Kayıt Ol
-                </Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography sx={{ textAlign: "center" }}>Dashboard</Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography sx={{ textAlign: "center" }}>Çıkış Yap</Typography>
-              </MenuItem>
+              {!user && (
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography
+                    sx={{ textAlign: "center" }}
+                    component={Link}
+                    href="/login"
+                  >
+                    Giriş Yap
+                  </Typography>
+                </MenuItem>
+              )}
+              {!user && (
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography
+                    sx={{ textAlign: "center" }}
+                    component={Link}
+                    href="/register"
+                  >
+                    Kayıt Ol
+                  </Typography>
+                </MenuItem>
+              )}
+              {user && (
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography sx={{ textAlign: "center" }}>Profil</Typography>
+                </MenuItem>
+              )}
+              {user && (
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Çıkış Yap
+                  </Typography>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
         </Toolbar>

@@ -1,102 +1,13 @@
-"use client";
-import { Login } from "@/service/fetchUsers";
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  TextField,
-  Typography,
-  Checkbox,
-  CircularProgress,
-} from "@mui/material";
+import getUserServer from "@/components/getUserServer";
+import { redirect } from "next/navigation";
+import LoginForm from "@/components/loginForm";
 
-import { useForm } from "react-hook-form";
+export default async function Page() {
+  const user = await getUserServer();
 
-export default function Page() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      username: "",
-      password: "",
-      rememberMe: false,
-    },
-  });
+  if (user) {
+    redirect("/");
+  }
 
-  const onSubmit = async (data) => {
-    await console.log(data);
-    try {
-      const result = await Login(data.email, data.password, data.rememberMe);
-      console.log(result);
-    } catch (error) {
-      console.error(error);
-      alert("Giriş başarısız", error.message);
-    }
-  };
-
-  return (
-    <Container
-      maxWidth="xs"
-      sx={{ mt: 4, mb: 4 }}
-      component="form"
-      noValidate
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <Typography
-        sx={{ my: 2 }}
-        gutterBottom
-        component="h1"
-        variant="h4"
-        align="center"
-      >
-        Giriş Yap
-      </Typography>
-      <Paper elevation={3} sx={{ p: 2 }}>
-        <Box>
-          <TextField
-            {...register("email", { required: true })}
-            error={!!errors.email}
-            label="E-posta"
-            variant="outlined"
-            fullWidth
-            autoFocus
-          />
-          <TextField
-            {...register("password", { required: true })}
-            error={!!errors.password}
-            label="Şifre"
-            variant="outlined"
-            type="password"
-            fullWidth
-            sx={{ mt: 2 }}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            mt: 2,
-          }}
-        >
-          <Box sx={{ alignSelf: "flex-start", mb: 1 }}>
-            <Checkbox {...register("rememberMe")} />
-            <Typography variant="body2" component="span">
-              Beni Hatırla
-            </Typography>
-          </Box>
-          <Button variant="contained" fullWidth type="submit">
-            {isSubmitting ? (
-              <CircularProgress color="white" size={24} />
-            ) : (
-              "Giriş Yap"
-            )}
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
-  );
+  return <LoginForm />;
 }

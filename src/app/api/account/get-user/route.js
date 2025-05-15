@@ -1,12 +1,13 @@
 import { cookies } from "next/headers";
-import { createSupabaseWithToken } from "@/lib/supabaseWithToken";
+import createSupabaseWithToken from "@/lib/supabaseWithToken";
+import { NextResponse } from "next/server";
 
 export async function GET() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get("sb-access-token")?.value;
 
   if (!token) {
-    return Response.json({ user: null }, { status: 401 });
+    return NextResponse.json({ user: null }, { status: 401 });
   }
 
   const supabase = createSupabaseWithToken(token);
@@ -16,5 +17,5 @@ export async function GET() {
     return Response.json({ user: null }, { status: 401 });
   }
 
-  return Response.json({ user });
+  return NextResponse.json({ user });
 }
