@@ -1,4 +1,4 @@
-import getUserServer from "@/components/getUserServer";
+import getUserServer from "@/utils/getUserServer";
 import { redirect } from "next/navigation";
 import LoginForm from "@/components/loginForm";
 

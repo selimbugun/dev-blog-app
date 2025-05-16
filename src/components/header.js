@@ -14,7 +14,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import CodeIcon from "@mui/icons-material/Code";
 import Link from "next/link";
-import GetUserClient from "./getUserClient";
+import GetUserClient from "@/utils/getUserClient";
 
 function Header() {
   const user = GetUserClient();
