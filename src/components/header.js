@@ -37,6 +37,16 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  const handleLogout = async () => {
+    setAnchorElUser(null);
+    const res = await fetch("/api/account/logout", {
+      method: "POST",
+    });
+    if (res.ok) {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -228,7 +238,7 @@ function Header() {
                 </MenuItem>
               )}
               {user && (
-                <MenuItem onClick={handleCloseUserMenu}>
+                <MenuItem onClick={handleLogout}>
                   <Typography sx={{ textAlign: "center" }}>
                     Çıkış Yap
                   </Typography>

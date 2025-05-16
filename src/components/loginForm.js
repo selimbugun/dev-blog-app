@@ -11,8 +11,16 @@ import {
   Checkbox,
   CircularProgress,
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import LoadingComponent from "./loading";
 
 export default function LoginForm() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -42,6 +50,8 @@ export default function LoginForm() {
         alert(result.error);
         return;
       }
+
+      window.location.href = "/";
     } catch (error) {
       console.error(error);
       alert("Giriş başarısız", error.message);
@@ -74,6 +84,7 @@ export default function LoginForm() {
             variant="outlined"
             fullWidth
             autoFocus
+            disabled={!mounted}
           />
           <TextField
             {...register("password", { required: true })}
@@ -83,8 +94,10 @@ export default function LoginForm() {
             type="password"
             fullWidth
             sx={{ mt: 2 }}
+            disabled={!mounted}
           />
         </Box>
+
         <Box
           sx={{
             display: "flex",
@@ -99,15 +112,27 @@ export default function LoginForm() {
               control={control}
               defaultValue={false}
               render={({ field }) => (
-                <Checkbox {...field} checked={field.value} color="primary" />
+                <Checkbox
+                  {...field}
+                  checked={field.value}
+                  color="primary"
+                  disabled={!mounted}
+                />
               )}
             />
             <Typography variant="body2" component="span">
               Beni Hatırla
             </Typography>
           </Box>
-          <Button variant="contained" fullWidth type="submit">
-            {isSubmitting ? (
+          <Button
+            variant="contained"
+            fullWidth
+            type="submit"
+            disabled={!mounted}
+          >
+            {!mounted ? (
+              "Lütfen Bekleyin"
+            ) : isSubmitting ? (
               <CircularProgress color="white" size={24} />
             ) : (
               "Giriş Yap"
