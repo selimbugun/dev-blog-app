@@ -1,7 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { loginAction } from "@/app/(account)/actions";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -18,6 +17,7 @@ export default function LoginForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    control,
   } = useForm({
     defaultValues: {
       email: "",
@@ -27,14 +27,21 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data) => {
-    await console.log(data);
     try {
-      const result = await loginAction(
-        data.email,
-        data.password,
-        data.rememberMe
-      );
-      console.log(result);
+      const response = await fetch("http://localhost:3000/api/account/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        alert(result.error);
+        return;
+      }
     } catch (error) {
       console.error(error);
       alert("Giriş başarısız", error.message);
@@ -87,7 +94,14 @@ export default function LoginForm() {
           }}
         >
           <Box sx={{ alignSelf: "flex-start", mb: 1 }}>
-            <Checkbox {...register("rememberMe")} />
+            <Controller
+              name="rememberMe"
+              control={control}
+              defaultValue={false}
+              render={({ field }) => (
+                <Checkbox {...field} checked={field.value} color="primary" />
+              )}
+            />
             <Typography variant="body2" component="span">
               Beni Hatırla
             </Typography>

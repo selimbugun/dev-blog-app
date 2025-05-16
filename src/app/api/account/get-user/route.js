@@ -14,7 +14,10 @@ export async function GET() {
   const { data: user, error } = await supabase.auth.getUser();
 
   if (error) {
-    return Response.json({ user: null }, { status: 401 });
+    const response = NextResponse.json({ user: null }, { status: 401 });
+    response.cookies.delete("sb-access-token");
+    response.cookies.delete("sb-refresh-token");
+    return response;
   }
 
   return NextResponse.json({ user });

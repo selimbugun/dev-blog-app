@@ -1,8 +1,15 @@
+import { createClient } from "@/lib/supabaseClient";
 import { NextResponse } from "next/server";
-import supabase from "@/lib/supabaseClient";
 
 export async function POST(req) {
-  const { email, password } = await req.json();
+  const { email, password, rememberMe } = await req.json();
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  const accessTokenMaxAge = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 2; // 7 gün veya 2 saat
+  const refreshTokenMaxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 2; // 30 gün veya 2 saat
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -21,14 +28,14 @@ export async function POST(req) {
     httpOnly: true,
     secure: true,
     path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 gün
+    maxAge: accessTokenMaxAge,
   });
 
   res.cookies.set("sb-refresh-token", refresh_token, {
     httpOnly: true,
     secure: true,
     path: "/",
-    maxAge: 60 * 60 * 24 * 30, // 30 gün
+    maxAge: refreshTokenMaxAge,
   });
 
   return res;
