@@ -1,5 +1,6 @@
+import { createClientWithToken } from "@/lib/supabaseWithToken";
 import { cookies } from "next/headers";
-import createSupabaseWithToken from "@/lib/supabaseWithToken";
+
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -10,7 +11,7 @@ export async function GET() {
     return NextResponse.json({ user: null }, { status: 401 });
   }
 
-  const supabase = createSupabaseWithToken(token);
+  const supabase = createClientWithToken(token);
   const { data: user, error } = await supabase.auth.getUser();
 
   if (error) {

@@ -1,10 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabaseClient";
 
 export async function GET() {
-  const supabase = await createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const supabase = await createClient();
   const { data, error } = await supabase.from("posts").select("*");
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {

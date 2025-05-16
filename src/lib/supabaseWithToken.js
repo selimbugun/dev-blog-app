@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-export default function supabaseWithToken(token) {
-  const supabase = createClient(
+export const createClientWithToken = (token) =>
+  createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
@@ -12,5 +12,3 @@ export default function supabaseWithToken(token) {
       },
     }
   );
-  return supabase;
-}

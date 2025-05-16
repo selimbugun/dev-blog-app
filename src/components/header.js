@@ -37,6 +37,11 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  const handleGoToProfile = () => {
+    setAnchorElUser(null);
+    window.location.href = "/profile";
+  };
+
   const handleLogout = async () => {
     setAnchorElUser(null);
     const res = await fetch("/api/account/logout", {
@@ -233,7 +238,7 @@ function Header() {
                 </MenuItem>
               )}
               {user && (
-                <MenuItem onClick={handleCloseUserMenu}>
+                <MenuItem onClick={handleGoToProfile}>
                   <Typography sx={{ textAlign: "center" }}>Profil</Typography>
                 </MenuItem>
               )}

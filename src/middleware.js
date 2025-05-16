@@ -1,20 +1,27 @@
-// middleware.js
-import { createMiddlewareClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-export async function middleware(req) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({
-    req,
-    res,
-  });
+export async function middleware(request) {
+  // Burada kendi oturum kontrolünü veya çerez işlemlerini yazabilirsin.
+  // Örneğin, belirli bir çerez yoksa yönlendirme yapabilirsin:
+  const accessToken = request.cookies.get("sb-access-token")?.value;
 
-  // Session kontrolü
-  await supabase.auth.getSession();
+  if (!accessToken && request.nextUrl.pathname.startsWith("/profile")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
-  return res;
+  if (accessToken && request.nextUrl.pathname.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/profile", request.url));
+  }
+
+  if (accessToken && request.nextUrl.pathname.startsWith("/register")) {
+    return NextResponse.redirect(new URL("/profile", request.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard", "/profile", "/admin/:path*"], // korumalı yollar
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };
