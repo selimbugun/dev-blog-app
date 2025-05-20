@@ -1,127 +1,148 @@
 import { createClient } from "@/lib/supabaseClient";
 import getUserServer from "@/utils/getUserServer";
-import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Paper,
+  Stack,
+  Typography,
+  Avatar,
+} from "@mui/material";
 import { cookies } from "next/headers";
-import Link from "next/link";
+import Image from "next/image";
 
 export default async function Page() {
-  const user = await getUserServer();
+  const userData = await getUserServer();
+  const user = userData?.user.user;
   const supabase = createClient();
   const { data, error } = await supabase
     .from("users_extra")
     .select("*")
-    .eq("id", user.user.user.id)
+    .eq("id", user.id)
     .single();
 
   if (error) {
     console.error("Veri alınamadı:", error.message);
   }
 
-  console.log(data);
-
   return (
-    <Grid container rowSpacing={3} columnSpacing={3} sx={{ p: 3, m: 3 }}>
-      <Grid size={{ sm: 4, xs: 12 }}>
-        {/* <Paper elevation={3} sx={{ minWidth: 300 }}>
-          <Typography variant="h4" sx={{ py: 2, textAlign: "center" }}>
-            Profil Ayarları
-          </Typography>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Button
-              sx={{
-                mb: 2,
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                textTransform: "none",
-              }}
-              onClick={() => setContent("photo")}
-            >
-              Fotoğrafını Güncelle
+    <Container maxWidth="md" sx={{ py: 6 }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        align="center"
+        gutterBottom
+        sx={{ fontWeight: 600 }}
+      >
+        Profil Sayfası
+      </Typography>
+
+      <Grid container spacing={4}>
+        {/* Sol kısım: Profil Bilgileri */}
+        <Grid size={{ xs: 12, md: 7 }}>
+          <Paper
+            elevation={4}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box>
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ fontWeight: 600, mb: 3 }}
+              >
+                Profil Bilgileri
+              </Typography>
+              <Grid container spacing={1}>
+                <Grid size={6}>
+                  <Typography color="text.secondary">Kullanıcı Adı</Typography>
+                </Grid>
+                <Grid size={6}>
+                  <Typography>{data.username}</Typography>
+                </Grid>
+
+                <Grid size={6}>
+                  <Typography color="text.secondary">E-posta</Typography>
+                </Grid>
+                <Grid size={6}>
+                  <Typography>{user.email}</Typography>
+                </Grid>
+
+                <Grid size={6}>
+                  <Typography color="text.secondary">Ad Soyad</Typography>
+                </Grid>
+                <Grid size={6}>
+                  <Typography>{data.fullname}</Typography>
+                </Grid>
+
+                <Grid size={6}>
+                  <Typography color="text.secondary">Doğum Tarihi</Typography>
+                </Grid>
+                <Grid size={6}>
+                  <Typography>{data.date_of_birth}</Typography>
+                </Grid>
+              </Grid>
+            </Box>
+
+            <Stack direction="row" spacing={2} mt={4}>
+              <Button variant="contained">Bilgileri Güncelle</Button>
+              <Button variant="outlined" color="error">
+                Şifre Değiştir
+              </Button>
+            </Stack>
+          </Paper>
+        </Grid>
+
+        {/* Sağ kısım: Profil Fotoğrafı */}
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Paper
+            elevation={4}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+            }}
+          >
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              Profil Fotoğrafı
+            </Typography>
+            <Box my={2}>
+              {data.avatar_url ? (
+                <Avatar
+                  src={data.avatar_url}
+                  alt="Profil Fotoğrafı"
+                  sx={{ width: 120, height: 120 }}
+                />
+              ) : (
+                <Image
+                  src="/no-image.png"
+                  alt="No Image"
+                  width={120}
+                  height={120}
+                  style={{ borderRadius: "50%" }}
+                  priority
+                />
+              )}
+            </Box>
+            <Button variant="outlined" size="small">
+              Profil Fotoğrafını Değiştir
             </Button>
-            <Button
-              sx={{
-                mb: 2,
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                textTransform: "none",
-              }}
-              onClick={() => setContent("update")}
-            >
-              Bilgileri Güncelle
-            </Button>
-            <Button
-              sx={{
-                mb: 2,
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                textTransform: "none",
-              }}
-              onClick={() => setContent("password")}
-            >
-              Sifre Değiştir
-            </Button>
-            <Button
-              sx={{
-                mb: 2,
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                textTransform: "none",
-              }}
-              onClick={() => setContent("delete")}
-            >
-              Hesabı Sil
-            </Button>
-          </Box>
-          <Typography variant="h4" sx={{ py: 2, textAlign: "center" }}>
-            Paylaşımlar
-          </Typography>
-          <Box>
-            <Button
-              sx={{
-                mb: 2,
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                textTransform: "none",
-              }}
-              onClick={() => setContent("photo")}
-            >
-              Paylaşımları Görüntüle
-            </Button>
-            <Button
-              sx={{
-                mb: 2,
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                textTransform: "none",
-              }}
-              onClick={() => setContent("photo")}
-            >
-              Bildirimler
-            </Button>
-            <Button
-              sx={{
-                mb: 2,
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                textTransform: "none",
-              }}
-              onClick={() => setContent("photo")}
-            >
-              Yorumlar
-            </Button>
-          </Box>
-        </Paper> */}
+          </Paper>
+        </Grid>
       </Grid>
-      <Grid size={{ sm: 8, xs: 12 }}>
-        <Paper elevation={3}></Paper>
-      </Grid>
-    </Grid>
+    </Container>
   );
 }
