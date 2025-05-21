@@ -1,6 +1,6 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -8,11 +8,11 @@ import {
   Paper,
   TextField,
   Typography,
-  Checkbox,
   CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import LoadingComponent from "./loading";
+
+import Link from "next/link";
 
 export default function LoginForm() {
   const [mounted, setMounted] = useState(false);
@@ -25,12 +25,10 @@ export default function LoginForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    control,
   } = useForm({
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: false,
     },
   });
 
@@ -106,29 +104,13 @@ export default function LoginForm() {
             mt: 2,
           }}
         >
-          <Box sx={{ alignSelf: "flex-start", mb: 1 }}>
-            <Controller
-              name="rememberMe"
-              control={control}
-              defaultValue={false}
-              render={({ field }) => (
-                <Checkbox
-                  {...field}
-                  checked={field.value}
-                  color="primary"
-                  disabled={!mounted}
-                />
-              )}
-            />
-            <Typography variant="body2" component="span">
-              Beni Hatırla
-            </Typography>
-          </Box>
           <Button
             variant="contained"
+            color="success"
             fullWidth
             type="submit"
             disabled={!mounted}
+            sx={{ color: "#fff" }}
           >
             {!mounted ? (
               "Lütfen Bekleyin"
@@ -137,6 +119,27 @@ export default function LoginForm() {
             ) : (
               "Giriş Yap"
             )}
+          </Button>
+        </Box>
+        <Box
+          sx={{
+            mt: 2,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="body2" align="center">
+            Hesabınız yok mu?{"  "}
+          </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            component={Link}
+            href="/register"
+            sx={{ textTransform: "none", ml: 1 }}
+          >
+            Kayıt Ol
           </Button>
         </Box>
       </Paper>

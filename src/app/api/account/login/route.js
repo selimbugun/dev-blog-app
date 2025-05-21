@@ -2,14 +2,14 @@ import { createClient } from "@/lib/supabaseClient";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { email, password, rememberMe } = await req.json();
+  const { email, password } = await req.json();
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 
-  const accessTokenMaxAge = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 2; // 7 gün veya 2 saat
-  const refreshTokenMaxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 2; // 30 gün veya 2 saat
+  const accessTokenMaxAge = 60 * 60 * 24 * 7;
+  const refreshTokenMaxAge = 60 * 60 * 24 * 30;
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
