@@ -7,7 +7,6 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { Paper } from "@mui/material";
 import UpdateTab from "./tabs/updateTab";
-import ChangePasswordTab from "./tabs/changePasswordTab";
 
 export default function ProfileTabs({ data, user }) {
   const [value, setValue] = React.useState("1");
@@ -29,16 +28,12 @@ export default function ProfileTabs({ data, user }) {
           >
             <Tab label="Bilgilerini Güncelle" value="1" />
             <Tab label="Profil Fotoğrafını Değiştir" value="2" />
-            <Tab label="Şifreni Değiştir" value="3" />
           </TabList>
         </Box>
         <TabPanel value="1">
           <UpdateTab data={data} user={user} />
         </TabPanel>
         <TabPanel value="2">Item Two</TabPanel>
-        <TabPanel value="3">
-          <ChangePasswordTab />
-        </TabPanel>
       </TabContext>
     </Paper>
   );

@@ -94,6 +94,14 @@ export default function LoginForm() {
             sx={{ mt: 2 }}
             disabled={!mounted}
           />
+          <Button
+            component={Link}
+            href="/forgot-password"
+            variant="span"
+            sx={{ mt: "3px", textTransform: "none" }}
+          >
+            Şifrenizi mi unuttunuz?
+          </Button>
         </Box>
 
         <Box
