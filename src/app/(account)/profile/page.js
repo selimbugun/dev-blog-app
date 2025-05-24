@@ -15,7 +15,7 @@ import Image from "next/image";
 export default async function Page() {
   const userData = await getUserServer();
   const user = await userData.user.user;
-  const supabase = createClient();
+  const supabase = createClient;
   const { data, error } = await supabase
     .from("users_extra")
     .select("*")

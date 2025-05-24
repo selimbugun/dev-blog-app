@@ -9,7 +9,7 @@ export default function ForgotPasswordPage() {
   const [message, setMessage] = useState("");
 
   const onSubmit = async (data) => {
-    const supabase = createClient();
+    const supabase = createClient;
     const { error } = await supabase.auth.resetPasswordForEmail(data.email);
 
     if (error) {

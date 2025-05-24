@@ -3,10 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const { email, password } = await req.json();
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const supabase = createClient;
 
   const accessTokenMaxAge = 60 * 60 * 24 * 7;
   const refreshTokenMaxAge = 60 * 60 * 24 * 30;

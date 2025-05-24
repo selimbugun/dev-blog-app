@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Box,
   Button,
@@ -8,21 +9,23 @@ import {
   Typography,
   Checkbox,
   CircularProgress,
+  Alert,
 } from "@mui/material";
-import { redirect } from "next/navigation";
-
+import { createClient } from "@/lib/supabaseClient";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+
 export default function Page() {
+  const [error, setError] = useState("");
+  const [confirm, setConfirm] = useState(false);
   const {
     register,
     handleSubmit,
     getValues,
     reset,
-    formState: { errors, isSubmitting, isSubmitted },
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      name: "",
-      username: "",
       email: "",
       email2: "",
       password: "",
@@ -30,20 +33,45 @@ export default function Page() {
       terms: false,
     },
   });
+  const supabase = createClient;
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    // reset form values
-    reset({
-      name: "",
-      username: "",
-      email: "",
-      email2: "",
-      password: "",
-      password2: "",
-      terms: false,
+  const onSubmit = async (formData) => {
+    // email kullanılıyor mu kontrol
+    const { data: user, error: userError } = await supabase.rpc(
+      "is_email_registered",
+      {
+        email_text: formData.email,
+      }
+    );
+
+    if (user) {
+      setError("Bu e-posta adresi zaten kullanılıyor.");
+      //email varsa bitir
+      return;
+    }
+
+    //kayıt
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login?confirmed=true`,
+      },
     });
-    redirect("/login");
+    console.log(data);
+
+    if (signUpError) {
+      setError(signUpError.message);
+    } else {
+      reset({
+        email: "",
+        email2: "",
+        password: "",
+        password2: "",
+        terms: false,
+      });
+      setConfirm(true);
+    }
   };
 
   return (
@@ -64,47 +92,16 @@ export default function Page() {
         Kayıt Ol
       </Typography>
       <Paper elevation={3} sx={{ p: 2 }}>
+        {error ? (
+          <Alert severity="error">{error}</Alert>
+        ) : (
+          confirm && (
+            <Alert severity="success">
+              Kayıt başarılı, e-postanızı kontrol ediniz.
+            </Alert>
+          )
+        )}
         <Box>
-          <TextField
-            {...register("name", {
-              required: true,
-              minLength: {
-                value: 5,
-                message: "En az 5 karakter olmalı",
-              },
-              maxLength: {
-                value: 20,
-                message: "En fazla 20 karakter olmalı",
-              },
-            })}
-            type="text"
-            helperText={errors.name?.message}
-            error={!!errors.name}
-            label="Ad Soyad"
-            variant="outlined"
-            fullWidth
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            {...register("username", {
-              required: true,
-              minLength: {
-                value: 5,
-                message: "En az 5 karakter olmalı",
-              },
-              maxLength: {
-                value: 20,
-                message: "En fazla 20 karakter olmalı",
-              },
-            })}
-            type="text"
-            helperText={errors.username?.message}
-            error={!!errors.username}
-            label="Kullanıcı Adı"
-            variant="outlined"
-            fullWidth
-            sx={{ mt: 2 }}
-          />
           <TextField
             {...register("email", {
               required: true,

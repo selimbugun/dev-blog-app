@@ -9,17 +9,31 @@ import {
   TextField,
   Typography,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
   const [mounted, setMounted] = useState(false);
+  const searchParams = useSearchParams();
+  const confirmed = searchParams.get("confirmed");
+  const [confirmedAlert, setConfirmedAlert] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (confirmed) {
+      setConfirmedAlert(true);
+
+      window.history.replaceState(null, "", "/login");
+    }
+  }, [confirmed]);
 
   const {
     register,
@@ -45,14 +59,17 @@ export default function LoginForm() {
       const result = await response.json();
 
       if (result.error) {
-        alert(result.error);
+        if (result.error === "Invalid login credentials") {
+          setError("E-posta veya şifre yanlış.");
+          return;
+        }
+        setError(result.error);
         return;
       }
 
       window.location.href = "/";
     } catch (error) {
-      console.error(error);
-      alert("Giriş başarısız", error.message);
+      console.log(error);
     }
   };
 
@@ -73,6 +90,12 @@ export default function LoginForm() {
       >
         Giriş Yap
       </Typography>
+      {confirmedAlert && (
+        <Alert severity="success">
+          Hesabınız onaylandı. Giriş Yapabilirsiniz.
+        </Alert>
+      )}
+      {error && <Alert severity="error">{error}</Alert>}
       <Paper elevation={3} sx={{ p: 2 }}>
         <Box>
           <TextField
