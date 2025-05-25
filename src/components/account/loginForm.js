@@ -4,9 +4,6 @@ import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
-  Container,
-  Paper,
-  TextField,
   Typography,
   CircularProgress,
   Alert,
@@ -15,21 +12,30 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import EmailInput from "./emailInput";
+import PasswordInput from "./passwordInput";
+import useLogin from "@/hooks/useLogin";
+import AccountLayout from "./layout/accountLayout";
+import AccountAlert from "./accountAlert";
 
 export default function LoginForm() {
-  const [mounted, setMounted] = useState(false);
   const searchParams = useSearchParams();
   const confirmed = searchParams.get("confirmed");
-  const [confirmedAlert, setConfirmedAlert] = useState(false);
-  const [error, setError] = useState("");
+  const { login } = useLogin();
+
+  const [state, setState] = useState({
+    mounted: false,
+    confirmedAlert: false,
+    error: "",
+  });
 
   useEffect(() => {
-    setMounted(true);
+    setState((prev) => ({ ...prev, mounted: true }));
   }, []);
 
   useEffect(() => {
     if (confirmed) {
-      setConfirmedAlert(true);
+      setState((prev) => ({ ...prev, confirmedAlert: true }));
 
       window.history.replaceState(null, "", "/login");
     }
@@ -47,75 +53,46 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data) => {
-    try {
-      const response = await fetch("http://localhost:3000/api/account/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (result.error) {
-        if (result.error === "Invalid login credentials") {
-          setError("E-posta veya şifre yanlış.");
-          return;
-        }
-        setError(result.error);
-        return;
-      }
-
-      window.location.href = "/";
-    } catch (error) {
-      console.log(error);
-    }
+    const error = await login(data);
+    if (error) setState((prev) => ({ ...prev, error }));
   };
 
   return (
-    <Container
-      maxWidth="xs"
-      sx={{ mt: 4, mb: 4 }}
-      component="form"
-      noValidate
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <Typography
-        sx={{ my: 2 }}
-        gutterBottom
-        component="h1"
-        variant="h4"
-        align="center"
-      >
-        Giriş Yap
-      </Typography>
-      {confirmedAlert && (
-        <Alert severity="success">
-          Hesabınız onaylandı. Giriş Yapabilirsiniz.
-        </Alert>
+    <AccountLayout title="Giriş Yap">
+      {state.confirmedAlert && (
+        <AccountAlert
+          type="success"
+          message="Hesabınız onaylandı. Giriş Yapabilirsiniz."
+        />
       )}
-      {error && <Alert severity="error">{error}</Alert>}
-      <Paper elevation={3} sx={{ p: 2 }}>
+      {state.error && <AccountAlert type="error" message={state.error} />}
+      <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
         <Box>
-          <TextField
-            {...register("email", { required: true })}
+          <EmailInput
+            {...register("email", {
+              required: true,
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Geçersiz e-posta adresi",
+              },
+            })}
             error={!!errors.email}
-            label="E-posta"
-            variant="outlined"
-            fullWidth
-            autoFocus
-            disabled={!mounted}
+            disabled={!state.mounted}
           />
-          <TextField
-            {...register("password", { required: true })}
-            error={!!errors.password}
-            label="Şifre"
-            variant="outlined"
-            type="password"
-            fullWidth
-            sx={{ mt: 2 }}
-            disabled={!mounted}
+          <PasswordInput
+            {...register("password", {
+              required: "Şifre zorunlu",
+              minLength: {
+                value: 8,
+                message: "En az 8 karakter olmalı",
+              },
+              maxLength: {
+                value: 20,
+                message: "En fazla 20 karakter olmalı",
+              },
+            })}
+            error={errors.password}
+            disabled={!state.mounted}
           />
           <Button
             component={Link}
@@ -140,10 +117,10 @@ export default function LoginForm() {
             color="success"
             fullWidth
             type="submit"
-            disabled={!mounted}
+            disabled={!state.mounted}
             sx={{ color: "#fff" }}
           >
-            {!mounted ? (
+            {!state.mounted ? (
               "Lütfen Bekleyin"
             ) : isSubmitting ? (
               <CircularProgress color="white" size={24} />
@@ -173,7 +150,7 @@ export default function LoginForm() {
             Kayıt Ol
           </Button>
         </Box>
-      </Paper>
-    </Container>
+      </Box>
+    </AccountLayout>
   );
 }

@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const supabase = createClient();
+const supabase = createClient;
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");

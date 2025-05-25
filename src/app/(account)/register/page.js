@@ -3,26 +3,30 @@
 import {
   Box,
   Button,
-  Container,
-  Paper,
-  TextField,
   Typography,
   Checkbox,
   CircularProgress,
-  Alert,
 } from "@mui/material";
-import { createClient } from "@/lib/supabaseClient";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import AccountLayout from "@/components/account/layout/accountLayout";
+import AccountAlert from "@/components/account/accountAlert";
+import EmailInput from "@/components/account/emailInput";
+import PasswordInput from "@/components/account/passwordInput";
+import useRegister from "@/hooks/useRegister";
 
 export default function Page() {
-  const [error, setError] = useState("");
-  const [confirm, setConfirm] = useState(false);
+  const { register: registerHook } = useRegister();
+  const [state, setState] = useState({
+    error: "",
+    confirm: false,
+  });
+
   const {
+    reset,
     register,
     handleSubmit,
     getValues,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -33,36 +37,14 @@ export default function Page() {
       terms: false,
     },
   });
-  const supabase = createClient;
 
   const onSubmit = async (formData) => {
-    // email kullanılıyor mu kontrol
-    const { data: user, error: userError } = await supabase.rpc(
-      "is_email_registered",
-      {
-        email_text: formData.email,
-      }
-    );
-
-    if (user) {
-      setError("Bu e-posta adresi zaten kullanılıyor.");
-      //email varsa bitir
-      return;
+    const { error, state: confirmState } = await registerHook(formData);
+    if (error) {
+      setState((prev) => ({ ...prev, error }));
     }
-
-    //kayıt
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login?confirmed=true`,
-      },
-    });
-    console.log(data);
-
-    if (signUpError) {
-      setError(signUpError.message);
-    } else {
+    if (confirmState) {
+      setState((prev) => ({ ...prev, error: "", confirm: confirmState }));
       reset({
         email: "",
         email2: "",
@@ -70,65 +52,47 @@ export default function Page() {
         password2: "",
         terms: false,
       });
-      setConfirm(true);
     }
   };
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{ mt: 4, mb: 4 }}
-      component="form"
-      noValidate
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <Typography
-        sx={{ my: 2 }}
-        gutterBottom
-        component="h1"
-        variant="h4"
-        align="center"
-      >
-        Kayıt Ol
-      </Typography>
-      <Paper elevation={3} sx={{ p: 2 }}>
-        {error ? (
-          <Alert severity="error">{error}</Alert>
-        ) : (
-          confirm && (
-            <Alert severity="success">
-              Kayıt başarılı, e-postanızı kontrol ediniz.
-            </Alert>
-          )
-        )}
+    <AccountLayout title="Kayıt Ol">
+      {state.error ? (
+        <AccountAlert type="error" message={state.error} />
+      ) : (
+        state.confirm && (
+          <AccountAlert
+            type="success"
+            message="Kayıt başarılı, e-postanızı kontrol ediniz."
+          />
+        )
+      )}
+      <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
         <Box>
-          <TextField
+          <EmailInput
             {...register("email", {
               required: true,
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Geçersiz e-posta adresi",
+              },
             })}
-            type="email"
-            helperText={errors.email?.message}
             error={!!errors.email}
-            label="E-posta Adresi"
-            variant="outlined"
-            fullWidth
+            helperText={errors.email?.message}
             sx={{ mt: 2 }}
           />
-          <TextField
+          <EmailInput
             {...register("email2", {
               required: true,
               validate: (value) =>
                 value === getValues("email") || "E-postalar eşleşmiyor",
             })}
-            type="email"
-            helperText={errors.email2?.message}
             error={!!errors.email2}
-            label="E-posta Adresi (Tekrar)"
-            variant="outlined"
-            fullWidth
+            helperText={errors.email2?.message}
             sx={{ mt: 2 }}
+            label="E-posta (Tekrar)"
           />
-          <TextField
+          <PasswordInput
             {...register("password", {
               required: true,
               minLength: {
@@ -139,28 +103,36 @@ export default function Page() {
                 value: 20,
                 message: "En fazla 20 karakter olmalı",
               },
+              validate: {
+                hasNumber: (v) => /[0-9]/.test(v) || "En az 1 rakam içermeli",
+                hasSpecialChar: (v) =>
+                  /[!@#$%^&*]/.test(v) || "En az 1 özel karakter",
+              },
             })}
-            type="password"
-            helperText={errors.password?.message}
             error={!!errors.password}
-            label="Şifre"
-            variant="outlined"
-            fullWidth
-            sx={{ mt: 2 }}
+            helperText={errors.password?.message}
           />
-          <TextField
+
+          <PasswordInput
             {...register("password2", {
               required: true,
-              validate: (value) =>
-                value === getValues("password") || "Şifreler eşleşmiyor",
+              minLength: {
+                value: 8,
+                message: "En az 8 karakter olmalı",
+              },
+              maxLength: {
+                value: 20,
+                message: "En fazla 20 karakter olmalı",
+              },
+              validate: {
+                hasNumber: (v) => /[0-9]/.test(v) || "En az 1 rakam içermeli",
+                hasSpecialChar: (v) =>
+                  /[!@#$%^&*]/.test(v) || "En az 1 özel karakter",
+              },
             })}
-            type="password"
-            helperText={errors.password2?.message}
             error={!!errors.password2}
+            helperText={errors.password2?.message}
             label="Şifre (Tekrar)"
-            variant="outlined"
-            fullWidth
-            sx={{ mt: 2 }}
           />
         </Box>
         <Box
@@ -197,7 +169,7 @@ export default function Page() {
             )}
           </Button>
         </Box>
-      </Paper>
-    </Container>
+      </Box>
+    </AccountLayout>
   );
 }
