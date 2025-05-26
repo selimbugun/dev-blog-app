@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Card,
   CardActions,
@@ -8,6 +9,7 @@ import {
 } from "@mui/material";
 import { Grid } from "@mui/system";
 import Link from "next/link";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 
 export default async function Page() {
   try {
@@ -20,20 +22,36 @@ export default async function Page() {
     const data = await response.json();
 
     return (
-      <Grid container rowSpacing={3} columnSpacing={3} sx={{ padding: "20px" }}>
+      <Grid container rowSpacing={1} columnSpacing={1} sx={{ padding: "10px" }}>
+        <Grid size={{ xs: 12 }}>
+          <Typography variant="h4" component="h1" align="center" gutterBottom>
+            DevBlog Sosyal
+          </Typography>
+        </Grid>
+
         {data.map((post) => (
-          <Grid key={post.id} size={{ xs: 12, md: 6 }} sx={{ padding: "20px" }}>
-            <Card sx={{ maxWidth: 500 }}>
+          <Grid key={post.id} size={{ xs: 12, md: 4 }} sx={{ padding: "20px" }}>
+            <Card
+              sx={{
+                maxWidth: 500,
+                height: "100%",
+                backgroundColor: "#f8fafc",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
               <CardMedia
                 component="img"
                 sx={{
-                  height: 140,
+                  height: 250,
                   objectFit: "contain",
+                  backgroundColor: "#f8fafc",
                 }}
-                image={post.cover_image}
+                image={"images/" + post.cover_image}
                 title={post.title}
               />
-              <CardContent>
+              <CardContent sx={{ flex: "1 0 auto" }}>
                 <Typography variant="h5" component="div">
                   {post.title}
                 </Typography>
@@ -57,11 +75,13 @@ export default async function Page() {
                   })}
                 </Typography>
                 <Button
-                  variant="outlined"
+                  variant="text"
+                  color="success"
                   component={Link}
                   href={`/blog/${post.slug}`}
+                  sx={{ textTransform: "none" }}
                 >
-                  Daha Fazla
+                  Detaylara Göz At &nbsp; <ArrowOutwardIcon />
                 </Button>
               </CardActions>
             </Card>
@@ -71,6 +91,8 @@ export default async function Page() {
     );
   } catch (error) {
     console.error("Error fetching data:", error);
-    return <div>Error fetching data</div>;
+    return (
+      <Alert severity="error">Sayfa Yüklenemedi! Lütfen tekrar deneyin.</Alert>
+    );
   }
 }
