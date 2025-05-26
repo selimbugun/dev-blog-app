@@ -1,23 +1,19 @@
 "use client";
+import AccountAlert from "@/components/account/accountAlert";
+import formatDateForInput from "@/utils/formatDateForInput";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-export default function UpdateTab({ data, user }) {
-  const [token, setToken] = useState("");
-  const [fullname, setFullname] = useState(data.fullname);
-  const [username, setUsername] = useState(data.username);
-  const [date_of_birth, setDateOfBirth] = useState(
-    formatDateForInput(data.date_of_birth)
-  );
-
-  function formatDateForInput(dateString) {
-    const date = new Date(dateString);
-    const timezoneOffset = date.getTimezoneOffset(); // Dakika cinsinden
-    date.setMinutes(date.getMinutes() - timezoneOffset); // UTC'den local'e çevir
-    return date.toISOString().slice(0, 10); // "YYYY-MM-DD"
-  }
+export default function UpdateTab({ data }) {
+  const [state, setState] = useState({
+    error: "",
+    token: "",
+    fullname: data.fullname,
+    username: data.username,
+    date_of_birth: formatDateForInput(data.date_of_birth),
+  });
 
   const {
     handleSubmit,
@@ -29,13 +25,14 @@ export default function UpdateTab({ data, user }) {
     const getToken = () => {
       fetch("http://localhost:3000/api/account/token")
         .then((res) => res.json())
-        .then((data) => setToken(data.token))
+        .then((data) => setState((prev) => ({ ...prev, token: data.token })))
         .catch((error) => console.log(error));
     };
     getToken();
   }, []);
 
   const onSubmit = async (formData) => {
+    setState((prev) => ({ ...prev, error: "" }));
     try {
       const payload = {
         id: data.id,
@@ -44,12 +41,12 @@ export default function UpdateTab({ data, user }) {
         date_of_birth: formData.date_of_birth,
       };
       const response = await fetch(
-        "http://localhost:3000/api/account/users_extra",
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/account/users_extra`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${state.token}`,
           },
           credentials: "include",
           body: JSON.stringify(payload),
@@ -57,10 +54,21 @@ export default function UpdateTab({ data, user }) {
       );
 
       const result = await response.json();
-      if (result.success) {
-        window.location.reload();
-        return result.data;
+
+      if (result.error) {
+        if (result.error.code === "23505") {
+          setState((prev) => ({
+            ...prev,
+            error: "Bu kullanıcı adı zaten alınmış",
+          }));
+          return;
+        }
+        setState((prev) => ({ ...prev, error: result.error.message }));
+        return;
       }
+
+      window.location.reload();
+      return result.data;
     } catch (error) {
       console.log(error);
     }
@@ -77,8 +85,10 @@ export default function UpdateTab({ data, user }) {
             {...register("fullname")}
             size="small"
             variant="outlined"
-            value={fullname || ""}
-            onChange={(e) => setFullname(e.target.value)}
+            value={state.fullname || ""}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, fullname: e.target.value }))
+            }
           />
         </Grid>
         <Grid size={{ xs: 3 }}>
@@ -89,8 +99,10 @@ export default function UpdateTab({ data, user }) {
             {...register("username")}
             size="small"
             variant="outlined"
-            value={username || ""}
-            onChange={(e) => setUsername(e.target.value)}
+            value={state.username || ""}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, username: e.target.value }))
+            }
           />
         </Grid>
 
@@ -102,10 +114,17 @@ export default function UpdateTab({ data, user }) {
             {...register("date_of_birth")}
             type="date"
             size="small"
-            value={date_of_birth || ""}
-            onChange={(e) => setDateOfBirth(e.target.value)}
+            value={state.date_of_birth || ""}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, date_of_birth: e.target.value }))
+            }
           />
         </Grid>
+        {state.error && (
+          <Grid>
+            <AccountAlert type="error" message={state.error} />
+          </Grid>
+        )}
         <Button
           variant="contained"
           type="submit"

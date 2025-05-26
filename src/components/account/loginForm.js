@@ -82,10 +82,7 @@ export default function LoginForm() {
           <PasswordInput
             {...register("password", {
               required: "Şifre zorunlu",
-              minLength: {
-                value: 8,
-                message: "En az 8 karakter olmalı",
-              },
+
               maxLength: {
                 value: 20,
                 message: "En fazla 20 karakter olmalı",

@@ -14,6 +14,9 @@ import Image from "next/image";
 
 export default async function Page() {
   const userData = await getUserServer();
+  if (!userData?.user) {
+    window.location.href = "/login";
+  }
   const user = await userData.user.user;
   const supabase = createClient;
   const { data, error } = await supabase
@@ -95,13 +98,6 @@ export default async function Page() {
                 </Grid>
               </Grid>
             </Box>
-
-            {/* <Stack direction="row" spacing={2} mt={4}>
-              <Button variant="contained">Bilgileri Güncelle</Button>
-              <Button variant="outlined" color="error">
-                Şifre Değiştir
-              </Button>
-            </Stack> */}
           </Paper>
         </Grid>
 
