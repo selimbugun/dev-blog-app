@@ -1,0 +1,40 @@
+/* tiptap.css */
+
+.my-editor {
+  min-height: 250px;
+  outline: none;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  background-color: #fff;
+}
+
+.my-editor:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.my-editor h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.my-editor ul,
+.my-editor ol {
+  padding-left: 1.5rem;
+}
+
+.my-editor li {
+  margin-bottom: 0.5rem;
+}
+
+.my-editor img {
+  max-width: 100%; /* Container genişliğini aşmasın */
+  height: auto; /* Oran bozulmasın */
+  display: block; /* İsteğe bağlı, alt boşlukları kontrol eder */
+  margin: 0 auto; /* Ortalamak istersen */
+}

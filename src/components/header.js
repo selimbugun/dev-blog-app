@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
@@ -198,7 +197,7 @@ function Header() {
         <Box sx={{ flexGrow: 0 }}>
           <Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <AccountCircleIcon fontSize="large" sx={{ color: "white" }} />
+              <AccountCircleIcon fontSize="large" sx={{ color: "black" }} />
             </IconButton>
           </Tooltip>
           <Menu
