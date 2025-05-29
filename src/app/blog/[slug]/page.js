@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { Alert, Paper, Typography } from "@mui/material";
 import Image from "next/image";
+import SafeHTML from "@/components/safeHTML";
 
 export default async function Page({ params }) {
   const { slug } = await params;
+  console.log(params);
 
   try {
     const response = await fetch(
@@ -26,18 +28,16 @@ export default async function Page({ params }) {
         </Typography>
         <Image
           priority
-          src={"/images/" + post.cover_image}
+          src={post.cover_image}
           alt={post.title}
           width={1000}
           height={400}
-          sx={{ objectFit: "contain" }}
+          style={{ width: "100%", height: "auto", objectFit: "contain" }}
         />
         <Typography variant="h5" gutterBottom>
           {post.description}
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          {post.content}
-        </Typography>
+        <SafeHTML html={post.content} />
         <small>{new Date(post.created_at).toLocaleString()}</small>
         <small></small>
       </Paper>

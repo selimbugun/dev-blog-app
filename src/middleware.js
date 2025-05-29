@@ -9,6 +9,10 @@ export async function middleware(request) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  if (!accessToken && request.nextUrl.pathname.startsWith("/blog/create")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   if (accessToken && request.nextUrl.pathname.startsWith("/login")) {
     return NextResponse.redirect(new URL("/profile", request.url));
   }

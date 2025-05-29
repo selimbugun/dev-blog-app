@@ -54,7 +54,7 @@ export default async function Page() {
                       objectFit: "contain",
                       backgroundColor: "#f8fafc",
                     }}
-                    image={"images/" + post.cover_image}
+                    image={post.cover_image}
                     title={post.title}
                   />
                   <CardContent sx={{ flex: "1 0 auto" }}>

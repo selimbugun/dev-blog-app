@@ -53,6 +53,7 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data) => {
+    setState((prev) => ({ ...prev, error: "" }));
     const error = await login(data);
     if (error) setState((prev) => ({ ...prev, error }));
   };

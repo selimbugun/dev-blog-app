@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, IconButton, Typography } from "@mui/material";
+import { Button, IconButton, TextField, Typography } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -19,12 +19,12 @@ import {
 import { useState } from "react";
 import "./tiptap.css";
 
-const TipTap = () => {
+const TipTap = ({ onSave }) => {
   const [headingLevel, setHeadingLevel] = useState(1);
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [StarterKit, Underline, Image],
-    content: "<p>Hello World!</p>",
+    content: "<p>Blog İçeriği!</p>",
     editorProps: {
       attributes: {
         class: "my-editor",
@@ -46,7 +46,7 @@ const TipTap = () => {
 
   const saveContent = () => {
     if (editor) {
-      console.log(editor.getHTML());
+      onSave(editor.getHTML());
     }
   };
 
@@ -54,9 +54,6 @@ const TipTap = () => {
     <>
       <div>
         <div>
-          <Typography variant="h4" component="h2">
-            Editor
-          </Typography>
           <div>
             <div>
               <IconButton>
@@ -113,8 +110,15 @@ const TipTap = () => {
             </IconButton>
           </div>
           <EditorContent editor={editor} />
-          <Button variant="contained" onClick={saveContent} sx={{ my: 2 }}>
-            Kaydet
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={saveContent}
+            sx={{ mt: 2 }}
+          >
+            İçeriği Kaydet
           </Button>
         </div>
       </div>
