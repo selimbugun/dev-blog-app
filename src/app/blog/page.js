@@ -10,7 +10,6 @@ import {
 import { Grid } from "@mui/system";
 import Link from "next/link";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import "react-quill/dist/quill.snow.css";
 
 export default async function Page() {
   try {
