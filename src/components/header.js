@@ -193,6 +193,19 @@ function Header() {
           >
             About
           </Button>
+          <Button
+            sx={{
+              my: 2,
+              color: "inherit",
+              display: "block",
+              ml: "auto",
+              mr: 2,
+            }}
+            component={Link}
+            href="/blog/create"
+          >
+            İçerik Ekle
+          </Button>
         </Box>
         <Box sx={{ flexGrow: 0 }}>
           <Tooltip title="Open settings">

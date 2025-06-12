@@ -80,6 +80,7 @@ export default function Page() {
             error={!!errors.email}
             helperText={errors.email?.message}
             sx={{ mt: 2 }}
+            autoFocus
           />
           <EmailInput
             {...register("email2", {

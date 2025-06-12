@@ -1,15 +1,27 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabaseClient";
+
 export async function GET(_, { params }) {
   const { slug } = await params;
 
-  const supabase = await createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const supabase = await createClient;
 
   const { data, error } = await supabase
     .from("posts")
-    .select("*")
+    .select(
+      `
+      id,
+      title,
+      description,
+      content,
+      cover_image,
+      created_at,
+      users_extra (
+        username,
+        avatar_url
+
+      )
+    `
+    )
     .eq("slug", slug)
     .single();
 

@@ -10,7 +10,6 @@ const EmailInput = forwardRef(
         label={label}
         variant="outlined"
         fullWidth
-        autoFocus
         disabled={disabled}
         error={!!error}
         helperText={error?.message}

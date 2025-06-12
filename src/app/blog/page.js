@@ -14,7 +14,7 @@ import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 export default async function Page() {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URl}/api/blogs`
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs`
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
