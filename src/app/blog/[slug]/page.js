@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Alert, Box, Paper, Typography, Divider, Chip } from "@mui/material";
 import Image from "next/image";
 import SafeHTML from "@/components/safeHTML";
-import PostCreater from "@/components/blogPost/postCreater";
+import BlogComments from "@/components/blogPost/blogComments";
 
 export default async function Page({ params }) {
   const { slug } = await params;
@@ -111,6 +111,7 @@ export default async function Page({ params }) {
             <SafeHTML html={post.content} />
           </Box>
         </Paper>
+        <BlogComments id={post.id} />
       </>
     );
   } catch (error) {

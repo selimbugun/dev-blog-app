@@ -1,9 +1,7 @@
-export default async function Home() {
+export default function App() {
   return (
     <div>
-      <main>
-        <h1>Home</h1>
-      </main>
+      <h1>home</h1>
     </div>
   );
 }
