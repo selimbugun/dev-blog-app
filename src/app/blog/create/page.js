@@ -24,7 +24,10 @@ export default function Page() {
   });
 
   const onSubmit = async (data) => {
-    const url = await uploadImage(state.selectedImage);
+    let url = null;
+    if (state.selectedImage) {
+      url = await uploadImage(state.selectedImage);
+    }
 
     const formData = {
       ...data,

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabaseClient";
+import { NextResponse } from "next/server";
 
 export async function GET(_, { params }) {
   const { slug } = await params;
@@ -26,12 +27,35 @@ export async function GET(_, { params }) {
     .single();
 
   if (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new NextResponse(JSON.stringify({ error: error.message }), {
       status: 500,
     });
   }
 
-  return new Response(JSON.stringify(data), {
+  return new NextResponse(JSON.stringify(data), {
     status: 200,
   });
+}
+
+// ...existing code...
+
+export async function DELETE(_, { params }) {
+  const { slug } = await params;
+
+  const supabase = createClient;
+
+  const { error } = await supabase.from("posts").delete().eq("slug", slug);
+
+  if (error) {
+    return new NextResponse(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
+  }
+
+  return new NextResponse(
+    JSON.stringify({ message: "Blog deleted successfully." }),
+    {
+      status: 200,
+    }
+  );
 }

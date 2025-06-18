@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, IconButton, TextField, Typography } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -19,12 +19,12 @@ import {
 import { useState } from "react";
 import "./tiptap.css";
 
-const TipTap = ({ onSave }) => {
+const TipTap = ({ onSave, message }) => {
   const [headingLevel, setHeadingLevel] = useState(1);
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [StarterKit, Underline, Image],
-    content: "<p>Blog İçeriği!</p>",
+    content: `<p>${message}</p>`,
     editorProps: {
       attributes: {
         class: "my-editor",

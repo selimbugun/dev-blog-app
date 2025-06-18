@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
   Grid,
   Alert,
@@ -20,6 +19,26 @@ export default function MyPostsTab() {
     error: null,
   });
 
+  const handleDelete = async (slug) => {
+    if (!window.confirm("Yazıyı silmek istediğinize emin misiniz?")) return;
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/${slug}`,
+        { method: "DELETE" }
+      );
+      if (!response.ok) {
+        const { error } = await response.json();
+        throw new Error(error || "Silme işlemi başarısız oldu.");
+      }
+      setState((prev) => ({
+        ...prev,
+        postList: prev.postList.filter((post) => post.slug !== slug),
+      }));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,7 +66,7 @@ export default function MyPostsTab() {
     return (
       <Grid container spacing={2}>
         {Array.from({ length: 3 }).map((_, idx) => (
-          <Grid item xs={12} md={6} lg={4} key={idx}>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={idx}>
             <Skeleton variant="rectangular" height={200} />
             <Skeleton width="80%" />
             <Skeleton width="60%" />
@@ -68,7 +87,7 @@ export default function MyPostsTab() {
   return (
     <Grid container spacing={3}>
       {postList.map((post) => (
-        <Grid item size={{ xs: 12, md: 6 }} key={post.id}>
+        <Grid size={{ xs: 12, md: 6 }} key={post.id}>
           <Card>
             <CardContent>
               <Typography variant="h6" component="div" gutterBottom>
@@ -95,6 +114,15 @@ export default function MyPostsTab() {
                 href={`/blog/${post.slug}`}
               >
                 Yazıya Git
+              </Button>
+              <Button
+                sx={{ m: 1, textTransform: "none" }}
+                size="small"
+                variant="contained"
+                color="error"
+                onClick={() => handleDelete(post.slug)}
+              >
+                Yazıyı Sil
               </Button>
             </CardActions>
           </Card>

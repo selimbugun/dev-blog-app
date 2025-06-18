@@ -29,9 +29,6 @@ export default async function Page() {
     console.error("Veri alınamadı:", error);
   }
 
-  console.log(data);
-  console.log(user);
-
   return (
     <Container maxWidth="md" sx={{ py: 6 }}>
       <Typography
