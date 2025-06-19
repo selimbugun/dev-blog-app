@@ -25,7 +25,12 @@ export default function MyPostsTab() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/${slug}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       if (!response.ok) {
         const { error } = await response.json();
@@ -37,6 +42,7 @@ export default function MyPostsTab() {
       }));
     } catch (err) {
       alert(err.message);
+      window.location.reload();
     }
   };
   useEffect(() => {

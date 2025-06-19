@@ -1,5 +1,7 @@
-import { createClient } from "@/lib/supabaseClient";
+import { cookies } from "next/headers";
+import { createClientWithToken } from "@/lib/supabaseWithToken";
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabaseClient";
 
 export async function GET(_, { params }) {
   const { slug } = await params;
@@ -37,25 +39,26 @@ export async function GET(_, { params }) {
   });
 }
 
-// ...existing code...
-
-export async function DELETE(_, { params }) {
+export async function DELETE(request, { params }) {
   const { slug } = await params;
+  const cookie = await cookies();
 
-  const supabase = createClient;
+  const supabase = await createClientWithToken(
+    cookie.get("sb-access-token")?.value
+  );
 
-  const { error } = await supabase.from("posts").delete().eq("slug", slug);
+  const { error: deleteError } = await supabase
+    .from("posts")
+    .delete()
+    .eq("slug", slug);
 
-  if (error) {
-    return new NextResponse(JSON.stringify({ error: error.message }), {
-      status: 500,
-    });
+  if (deleteError) {
+    console.error("Delete error:", deleteError);
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
   }
 
-  return new NextResponse(
-    JSON.stringify({ message: "Blog deleted successfully." }),
-    {
-      status: 200,
-    }
+  return NextResponse.json(
+    { message: "Post deleted successfully" },
+    { status: 200 }
   );
 }
