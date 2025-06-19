@@ -1,103 +1,126 @@
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  Divider,
-  TextField,
-  Button,
-} from "@mui/material";
-import TipTap from "../tiptap/TextEditor";
+"use client";
+import { Container, Paper, Typography } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import CommentList from "./CommentList";
+import CommentForm from "./CommentForm";
+import GetUserClient from "@/utils/getUserClient";
 
-export default async function BlogComments({ id }) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/comments?postId=${id}`
-    );
-    if (!response.ok) {
-      throw new Error("Veri alınamadı");
+export default function BlogComments({ id }) {
+  const user = GetUserClient();
+
+  const [state, setState] = useState({
+    comments: [],
+    loading: true,
+    error: "",
+    content: "",
+    submitting: false,
+  });
+
+  const fetchComments = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/blogs/comments?postId=${id}`);
+      const data = await response.json();
+      setState((prev) => ({
+        ...prev,
+        comments: data,
+        loading: false,
+      }));
+    } catch {
+      setState((prev) => ({
+        ...prev,
+        error: "Yorumlar yüklenemedi.",
+        loading: false,
+      }));
     }
-    const data = await response.json();
-    console.log(data);
+  }, [id]);
 
-    return (
-      <>
-        <Paper
-          elevation={3}
-          sx={{
-            padding: { xs: "15px", md: "30px" },
-            margin: { xs: "10px", md: "20px" },
-            borderRadius: "12px",
-            backgroundColor: "#fafafa",
-          }}
-        >
-          <Typography variant="h4" sx={{ textAlign: "center", mb: 4 }}>
-            Yorumlar
-          </Typography>
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
-          <Container maxWidth="md">
-            {data.length === 0 ? (
-              <Typography align="center" color="text.secondary">
-                Henüz yorum yok.
-              </Typography>
-            ) : (
-              data.map((comment) => (
-                <Box
-                  key={comment.id}
-                  sx={{
-                    mb: 3,
-                    p: 2,
-                    borderRadius: 2,
-                    backgroundColor: "#fff",
-                    boxShadow: 1,
-                  }}
-                >
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    {comment.content}
-                  </Typography>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!state.content.trim()) return;
+    setState((prev) => ({ ...prev, submitting: true, error: "" }));
 
-                  <Divider sx={{ my: 1 }} />
+    try {
+      const response = await fetch(`/api/blogs/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: id, content: state.content }),
+      });
 
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {comment.user?.username || "Anonim"}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {new Date(comment.created_at).toLocaleString("tr-TR")}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))
-            )}
-          </Container>
-          <Box>
-            <TextField
-              fullWidth
-              label="Yorum"
-              multiline
-              rows={4}
-              sx={{ mt: 2 }}
-            />
-            <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-              Yorum Yap
-            </Button>
-          </Box>
-        </Paper>
-      </>
-    );
-  } catch (error) {
-    console.error("Veri alınamadı:", error);
-    return (
-      <Typography color="error" align="center" sx={{ mt: 4 }}>
-        Yorumlar yüklenemedi.
+      const newComment = await response.json();
+      setState((prev) => ({
+        ...prev,
+        comments: [newComment, ...prev.comments],
+        content: "",
+        submitting: false,
+      }));
+    } catch {
+      setState((prev) => ({
+        ...prev,
+        error: "Yorum gönderilemedi.",
+        submitting: false,
+      }));
+    }
+  };
+
+  const handleDelete = async (commentId) => {
+    if (!confirm("Bu yorumu silmek istediğinizden emin misiniz?")) return;
+
+    try {
+      await fetch(`/api/blogs/comments?id=${commentId}`, { method: "DELETE" });
+      setState((prev) => ({
+        ...prev,
+        comments: prev.comments.filter((c) => c.id !== commentId),
+      }));
+    } catch {
+      alert("Yorum silinemedi.");
+    }
+  };
+
+  return (
+    <Paper
+      elevation={3}
+      sx={{
+        padding: { xs: "15px", md: "30px" },
+        margin: { xs: "10px", md: "20px" },
+        borderRadius: "12px",
+        backgroundColor: "#fafafa",
+      }}
+    >
+      <Typography variant="h4" sx={{ textAlign: "center", mb: 4 }}>
+        Yorumlar
       </Typography>
-    );
-  }
+
+      <Container maxWidth="md">
+        {state.loading ? (
+          <Typography align="center" color="text.secondary">
+            Yükleniyor...
+          </Typography>
+        ) : state.error ? (
+          <Typography color="error" align="center">
+            {state.error}
+          </Typography>
+        ) : (
+          <CommentList
+            comments={state.comments}
+            currentUserId={user?.id}
+            onDelete={handleDelete}
+          />
+        )}
+      </Container>
+
+      <CommentForm
+        content={state.content}
+        onChange={(e) =>
+          setState((prev) => ({ ...prev, content: e.target.value }))
+        }
+        onSubmit={handleSubmit}
+        submitting={state.submitting}
+        user={user}
+      />
+    </Paper>
+  );
 }

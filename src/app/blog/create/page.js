@@ -37,18 +37,13 @@ export default function Page() {
     };
 
     try {
-      console.log(state.selectedImage);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`/api/blogs`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
       const result = await response.json();
       console.log(result);
 

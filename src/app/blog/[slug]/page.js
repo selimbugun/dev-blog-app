@@ -4,24 +4,6 @@ import Image from "next/image";
 import SafeHTML from "@/components/safeHTML";
 import BlogComments from "@/components/blogPost/blogComments";
 
-export async function generateStaticParams() {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs`
-    );
-    if (!response.ok) throw new Error("Network response was not ok");
-    const posts = await response.json();
-    return posts.map((post) => ({
-      slug: post.slug,
-    }));
-  } catch (error) {
-    console.error("generateStaticParams error:", error);
-    return []; // Fallback olarak boş array
-  }
-}
-
-export const dynamicParams = false;
-
 export default async function Page({ params }) {
   const { slug } = await params;
 

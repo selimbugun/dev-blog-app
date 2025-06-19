@@ -18,15 +18,41 @@ export async function GET() {
   });
 }
 
+async function generateUniqueSlug(title, supabase) {
+  const baseSlug = slugify(title);
+
+  let slug = baseSlug;
+  let count = 1;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id")
+      .eq("slug", slug)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      // PGRST116: no rows found, yani slug boşsa sorun yok
+      throw new Error(error.message);
+    }
+
+    if (!data) break; // slug kullanılmıyor, kır döngüyü
+
+    slug = `${baseSlug}-${count}`;
+    count++;
+  }
+  return slug;
+}
+
 export async function POST(req) {
   const body = await req.json();
-  console.log(body.author_id);
   const cookieStore = await cookies();
   const token = cookieStore.get("sb-access-token")?.value;
 
-  const slug = slugify(body.title);
-
   const supabase = await createClientWithToken(token);
+  const slug = await generateUniqueSlug(body.title, supabase);
+
+  //
   const { data, error } = await supabase
     .from("posts")
     .insert({
@@ -39,7 +65,9 @@ export async function POST(req) {
       cover_image: body.cover_image,
       author_id: body.author_id,
     })
-    .select();
+    .select(
+      "id, title, slug, content, description, created_at, published, cover_image, author_id"
+    );
 
   if (error) {
     return new NextResponse(JSON.stringify({ error: error.message }), {
