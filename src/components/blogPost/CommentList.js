@@ -3,7 +3,7 @@ import CommentItem from "./CommentItem";
 import { Typography } from "@mui/material";
 
 export default function CommentList({ comments, currentUserId, onDelete }) {
-  if (comments.length === 0) {
+  if (!Array.isArray(comments) || comments.length === 0) {
     return (
       <Typography align="center" color="text.secondary">
         Henüz yorum yok.

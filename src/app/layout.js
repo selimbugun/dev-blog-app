@@ -1,21 +1,11 @@
-"use server";
-import Header from "@/components/header";
-import "./globals.css";
-import Footer from "@/components/footer";
-import { Container } from "@mui/material";
-import CustomThemeProvider from "@/providers/themeProvider";
+// app/layout.js (Server Component)
+import ClientLayout from "./client-layout";
 
-export default async function RootLayout({ children }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <body>
-        <CustomThemeProvider>
-          <Header />
-          <Container>{children}</Container>
-          <footer>
-            <Footer />
-          </footer>
-        </CustomThemeProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

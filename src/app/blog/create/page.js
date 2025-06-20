@@ -2,7 +2,7 @@
 import TipTap from "@/components/tiptap/TextEditor";
 import GetUserClient from "@/utils/getUserClient";
 import { uploadImage } from "@/utils/uploadImage";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -73,7 +73,7 @@ export default function Page() {
   };
 
   return (
-    <>
+    <Container>
       <Typography variant="h4" component="h1" align="center" gutterBottom>
         Yeni Yazı Oluştur
       </Typography>
@@ -181,6 +181,6 @@ export default function Page() {
           </Button>
         )}
       </Box>
-    </>
+    </Container>
   );
 }

@@ -121,15 +121,6 @@ function Header() {
                 Blog
               </Typography>
             </MenuItem>
-            <MenuItem onClick={handleCloseNavMenu}>
-              <Typography
-                component={Link}
-                href="/about"
-                sx={{ textAlign: "center" }}
-              >
-                About
-              </Typography>
-            </MenuItem>
           </Menu>
         </Box>
         <CodeIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
@@ -180,18 +171,6 @@ function Header() {
             href="/blog"
           >
             Blog
-          </Button>
-          <Button
-            onClick={handleCloseNavMenu}
-            sx={{
-              my: 2,
-              color: "inherit",
-              display: "block",
-            }}
-            component={Link}
-            href="/about"
-          >
-            About
           </Button>
           <Button
             sx={{

@@ -1,5 +1,13 @@
 import { notFound } from "next/navigation";
-import { Alert, Box, Paper, Typography, Divider, Chip } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Paper,
+  Typography,
+  Divider,
+  Chip,
+  Container,
+} from "@mui/material";
 import Image from "next/image";
 import SafeHTML from "@/components/safeHTML";
 import BlogComments from "@/components/blogPost/blogComments";
@@ -12,16 +20,23 @@ export default async function Page({ params }) {
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/${slug}`,
       { next: { revalidate: 3600 } }
     );
+
+    // 404 durumunu kontrol et
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      if (response.status === 404) {
+        notFound();
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     const post = await response.json();
 
-    if (!post) {
+    // Post bulunamadıysa veya boşsa
+    if (!post || Object.keys(post).length === 0) {
       notFound();
     }
+
     return (
-      <>
+      <Container>
         <Paper
           elevation={3}
           sx={{
@@ -110,9 +125,12 @@ export default async function Page({ params }) {
           </Box>
         </Paper>
         <BlogComments id={post.id} />
-      </>
+      </Container>
     );
   } catch (error) {
+    if (error.message.includes("404") || error.message.includes("not found")) {
+      notFound();
+    }
     console.error("Error fetching data:", error);
     return <Alert severity="error">Bir hata oluştu!</Alert>;
   }

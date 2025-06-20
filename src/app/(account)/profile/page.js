@@ -42,8 +42,7 @@ export default async function Page() {
       </Typography>
 
       <Grid container spacing={4}>
-        {/* Sol kısım: Profil Bilgileri */}
-        <Grid size={{ xs: 12, md: 7 }}>
+        <Grid size={{ xs: 12 }}>
           <Paper
             elevation={4}
             sx={{
@@ -95,48 +94,6 @@ export default async function Page() {
                 </Grid>
               </Grid>
             </Box>
-          </Paper>
-        </Grid>
-
-        {/* Sağ kısım: Profil Fotoğrafı */}
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Paper
-            elevation={4}
-            sx={{
-              p: 4,
-              borderRadius: 4,
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-            }}
-          >
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-              Profil Fotoğrafı
-            </Typography>
-            <Box my={2}>
-              {data.avatar_url ? (
-                <Avatar
-                  src={data.avatar_url}
-                  alt="Profil Fotoğrafı"
-                  sx={{ width: 120, height: 120 }}
-                />
-              ) : (
-                <Image
-                  src="/no-image.png"
-                  alt="No Image"
-                  width={120}
-                  height={120}
-                  style={{ borderRadius: "50%" }}
-                  priority
-                />
-              )}
-            </Box>
-            <Button variant="outlined" size="small">
-              Profil Fotoğrafını Değiştir
-            </Button>
           </Paper>
         </Grid>
       </Grid>

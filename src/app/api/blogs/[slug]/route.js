@@ -28,6 +28,11 @@ export async function GET(_, { params }) {
     .eq("slug", slug)
     .single();
 
+  if (!data) {
+    return new NextResponse(JSON.stringify({ error: "Post not found" }), {
+      status: 404,
+    });
+  }
   if (error) {
     return new NextResponse(JSON.stringify({ error: error.message }), {
       status: 500,

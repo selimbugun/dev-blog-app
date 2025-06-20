@@ -28,15 +28,13 @@ export default function ProfileTabs({ data, user }) {
             scrollButtons="auto"
           >
             <Tab label="Bilgilerini Güncelle" value="1" />
-            <Tab label="Profil Fotoğrafını Değiştir" value="2" />
-            <Tab label="Yazılarım" value="3" />
+            <Tab label="Yazılarım" value="2" />
           </TabList>
         </Box>
         <TabPanel value="1">
           <UpdateTab data={data} user={user} />
         </TabPanel>
-        <TabPanel value="2">Item Two</TabPanel>
-        <TabPanel value="3">
+        <TabPanel value="2">
           <MyPostsTab />
         </TabPanel>
       </TabContext>
