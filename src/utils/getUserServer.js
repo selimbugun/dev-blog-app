@@ -7,11 +7,14 @@ export default async function getUserServer() {
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
 
-  const response = await fetch("http://localhost:3000/api/account/get-user", {
-    headers: {
-      Cookie: cookieHeader,
-    },
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/account/get-user`,
+    {
+      headers: {
+        Cookie: cookieHeader,
+      },
+    }
+  );
   const data = await response.json();
 
   if (!data.user) {

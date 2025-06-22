@@ -1,16 +1,7 @@
 import ProfileTabs from "@/components/profile/profileTabs";
 import { createClient } from "@/lib/supabaseClient";
 import getUserServer from "@/utils/getUserServer";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  Typography,
-  Avatar,
-} from "@mui/material";
-import Image from "next/image";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 
 export default async function Page() {
   const userData = await getUserServer();
