@@ -23,7 +23,7 @@ export default function UpdateTab({ data }) {
 
   useEffect(() => {
     const getToken = () => {
-      fetch("http://localhost:3000/api/account/token")
+      fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/account/token`)
         .then((res) => res.json())
         .then((data) => setState((prev) => ({ ...prev, token: data.token })))
         .catch((error) => console.log(error));
