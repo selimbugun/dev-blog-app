@@ -11,16 +11,20 @@ import {
 import { Box, Grid } from "@mui/system";
 import Link from "next/link";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import { createClient } from "@/lib/supabaseClient";
 
 export default async function Page() {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs`
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+    const supabase = createClient;
+
+    const { data, error } = await supabase.from("posts").select("*");
+    if (error) {
+      return (
+        <Alert severity="error">
+          Sayfa Yüklenemedi! Lütfen tekrar deneyin.
+        </Alert>
+      );
     }
-    const data = await response.json();
 
     return (
       <Container>
