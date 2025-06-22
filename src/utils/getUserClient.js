@@ -5,7 +5,7 @@ export default function GetUserClient() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/account/get-user", {
+    fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/account/get-user`, {
       method: "GET",
       credentials: "include",
     })
